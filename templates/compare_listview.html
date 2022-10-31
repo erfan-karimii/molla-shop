@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('{% static "assets/images/page-header-bg.jpg" %}')">
+        <div class="container">
+            <h1 class="page-title">4 ستونه<span>فروشگاه</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">خانه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">فروشگاه</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="products mb-3">
+                        <div class="row justify-content-center">
+                            {% for x in contact_list %}
+                            <div class="col-6 col-md-4 col-lg-4 col-xl-3">
+                                <div class="product product-7 text-center">
+                                    <figure class="product-media">
+                                        {% comment %} <span class="product-label label-new">جدید</span> {% endcomment %}
+                                        <a href="{% url 'product:compare_2' x.id %}">
+                                            <img src="{{x.image.url}}" alt="{{x.alt}}" class="product-image">
+                                        </a>
+                                        <div class="product-action-vertical">
+                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable">
+                                                <span>افزودن به لیست علاقه مندی</span>
+                                            </a>
+                                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="مشاهده سریع محصول">
+                                                <span>مشاهده سریع</span>
+                                            </a>
+                                            <a href="{% url 'product:compare_2' x.id %}" class="btn-product-icon btn-compare" title="مقایسه">
+                                                <span>مقایسه</span>
+                                            </a>
+                                        </div><!-- End .product-action-vertical -->
+                                    </figure>
+                                    <div class="product-body">
+                                        <div class="product-cat text-center">
+                                            <a href="#">{{x.category}}</a>
+                                        </div><!-- End .product-cat -->
+                                        <h3 class="product-title text-center">
+                                            <a>
+                                            {{x.name}}
+                                            </a>
+                                        </h3><!-- End .product-title -->
+                                        <div class="product-price">
+                                            {{x.price_asli}} تومان
+                                        </div><!-- End .product-price -->
+                                        <div class="product-nav product-nav-dots">
+                                            <a  style="background: {{x.color_asli}};">
+                                                <span class="sr-only">نام رنگ</span>
+                                            </a>
+                                            {% for m in x.color_set.all %}
+                                            <a style="background: {{m.color}};">
+                                                <span class="sr-only">نام رنگ</span>
+                                            </a>
+                                            {% endfor %}
+                                        </div><!-- End .product-nav -->
+
+                                        <div class="product-nav product-nav-thumbs">
+                                            {% for m in x.galleryimage_set.all %}
+                                            <a>
+                                                <img src="{{m.image.url}}" alt="{{m.alt}}">
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div><!-- End .col-lg-9 -->
+            </div><!-- End .row -->
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main>
+{% endblock %}

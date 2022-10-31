@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('static/assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">مقایسه محصولات<span>فروشگاه</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'product:listview' %}">فروشگاه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">مقایسه محصولات</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+    <div class="page-content">
+        <div class="container">
+            <div class="compare-table table-responsive">
+                <table class="table mb-0">
+                    <tbody>
+                    {% if product_2 %}
+                        <tr>
+                            <td class="first-column">محصول</td>
+                            <td class="product-image-title">
+                                <a href="#" class="image"><img src="{{product_1.image.url}}" alt="Compare Product" style="width:auto;"></a>
+                                <a href="#" class="category">{{product_1.category}}</a>
+                                <a href="#" class="title">{{product_1.name}}</a>
+                            </td>
+                            <td class="product-image-title">
+                                <a href="#" class="image"><img src="{{product_2.image.url}}" alt="Compare Product" style="width:auto;"></a>
+                                <a href="#" class="category">{{product_2.category}}</a>
+                                <a href="#" class="title">{{product_2.name}}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">توضیحات</td>
+                            <td class="pro-desc">
+                                <p>{{product_1.tozihat}}</p>
+                            </td>
+                            <td class="pro-desc">
+                                <p>{{product_2.tozihat}}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">قیمت</td>
+                            <td class="pro-price">{{product_1.main_discount_cal}} تومان</td>
+                            <td class="pro-price">{{product_2.main_discount_cal}} تومان</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">رنگ</td>
+                            <td class="pro-color">{{product_1.color_asli}}{% for color in product_1.color_set.all %}{{color.color}}{% endfor %}</td>
+                            <td class="pro-color">{{product_2.color_asli}}{% for color in product_2.color_set.all %}{{color.color}}{% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">سایز</td>
+                            <td class="pro-color">{% for size in product_1.size_set.all %}{{size.size}},{% endfor %}{{product_1.size_asli}}</td>
+                            <td class="pro-color">{% for size in product_2.size_set.all %}{{size.size}},{% endfor %}{{product_2.size_asli}}</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">وضعیت موجودی</td>
+                            <td class="pro-stock"><span class="in-stock">موجود{static}</span></td>
+                            <td class="pro-stock"><span class="out-of-stock">موجود{static}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">افزودن به سبد خرید no</td>
+                            <td class="pro-addtocart">
+                                <button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>افزودن به سبد خرید</button>
+                            </td>
+                            <td class="pro-addtocart">
+                                <button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>افزودن به سبد خرید</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">امتیاز (remove?)</td>
+                            <td class="pro-ratting">
+                                <i class="icon-star-o"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                            </td>
+                            <td class="pro-ratting">
+                            </td>
+                        </tr>
+                    {% elif product_1 %}
+                        <tr>
+                            <td class="first-column">محصول</td>
+                            <td class="product-image-title">
+                                <a href="#" class="image"><img src="{{product_1.image.url}}" alt="Compare Product" style="width:auto;"></a>
+                                <a href="#" class="category">{{product_1.category}}</a>
+                                <a href="#" class="title">{{product_1.name}}</a>
+                            </td>
+                            <td class="product-image-title">
+                                <a href="{% url 'product:compare_listview' id=product_1.id cat=product_1.category %}" class="btn btn-block btn-outline-dark" id="add-product" style="margin-bottom:200px;"><i class="icon-cart-plus"></i>اضافه کردن محصول</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">توضیحات</td>
+                            <td class="pro-desc">
+                                <p>{{product_1.tozihat}}</p>
+                            </td>
+                            <td class="pro-desc">
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td class="first-column">قیمت</td>
+                            <td class="pro-price">{{product_1.main_discount_cal}} تومان</td>
+                            <td class="pro-price"></td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">رنگ</td>
+                            <td class="pro-color">{{product_1.color_asli}}{% for color in product_1.color_set.all %}{{color.color}}{% endfor %}</td>
+                            <td class="pro-color"></td>
+
+                        </tr>
+                        <tr>
+                            <td class="first-column">سایز</td>
+                            <td class="pro-color">{% for size in product_1.size_set.all %}{{size.size}},{% endfor %}{{product_1.size_asli}}</td>
+                            <td class="pro-color"></td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">وضعیت موجودی</td>
+                            <td class="pro-stock"><span class="in-stock">موجود{static}</span></td>
+                            <td class="pro-stock"><span class="out-of-stock"></span></td>
+
+                        </tr>
+                        <tr>
+                            <td class="first-column">افزودن به سبد خرید no</td>
+                            <td class="pro-addtocart"><button class="btn btn-block btn-outline-primary-2"><i
+                                        class="icon-cart-plus"></i>افزودن به سبد خرید</button></td>
+                            <td class="pro-addtocart">
+                            </td>
+                           
+                        </tr>
+                        <tr>
+                            <td class="first-column">امتیاز (remove?)</td>
+                            <td class="pro-ratting">
+                                <i class="icon-star-o"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                                <i class="icon-star"></i>
+                            </td>
+                            <td class="pro-ratting">
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="first-column">محصول</td>
+                            <td class="product-image-title">
+                                <a href="{% url 'product:listview' %}" class="btn btn-block btn-outline-dark" id="add-product"><i class="icon-cart-plus"></i>اضافه کردن محصول</a>
+                            </td>
+                            <td class="product-image-title">
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main>
+{% endblock body %}
+

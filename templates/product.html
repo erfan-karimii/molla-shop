@@ -1,0 +1,534 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load comment_tag %}
+{% block css %}<link rel="stylesheet" href="{% static 'assets/css/style2.css' %}">{% endblock css %}
+{% block body %}
+<main class="main">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex align-items-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'product:listview' %}">محصولات</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{x.category.name}}</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+    <div class="page-content">
+        <div class="container">
+            <div class="product-details-top">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="product-gallery product-gallery-vertical">
+                            <div class="row">
+                                <figure class="product-main-image">
+                                    <img id="product-zoom" src="{{x.image.url}}" data-zoom-image="/thumnail/{{x.image}}" alt="تصویر محصول">
+                                    <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                                        <i class="icon-arrows"></i>
+                                    </a>
+                                </figure><!-- End .product-main-image -->
+
+                                <div id="product-zoom-gallery" class="product-image-gallery">
+                                    <a class="product-gallery-item active" href="#" data-image="{{x.image.url}}" data-zoom-image="/thumnail/{{x.image}}">
+                                        <img src="{{x.image.url}}"alt="توضیحات تصویر">
+                                    </a>
+                                    {% for m in x.galleryimage_set.all %}
+                                    <a class="product-gallery-item" href="#" data-image="{{m.image.url}}" data-zoom-image="/thumnail/{{m.image}}">
+                                        <img src="{{m.image.url}}" alt="{{m.alt}}">
+                                    </a>
+                                    {% endfor %}                                  
+                                </div><!-- End .product-image-gallery -->
+                            </div><!-- End .row -->
+                        </div><!-- End .product-gallery -->
+                    </div><!-- End .col-md-6 -->
+
+                    <div class="col-md-6">
+                        <form class="product-details" action='{% url "cart:add_user_order" %}' method='post'>
+                            {% csrf_token %}
+                            {{form.product_id}}
+                            <h1 class="product-title">{{x.name}}</h1>
+                            <!-- End .product-title -->
+
+                            <div class="ratings-container">
+                                <div class="ratings">
+                                    <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                                </div><!-- End .ratings -->
+                                <a class="ratings-text" href="#product-review-link" id="review-link">( 2 نظر
+                                    )</a>
+                            </div><!-- End .rating-container -->
+                            {% if x.takhfif %}
+                            <div class="product-price" >
+                                <span id="nprice">{{x.main_discount_cal}}</span>
+                                 تومان
+                            </div><!-- End .product-price -->
+                            {% else %}
+                            <div class="product-price">
+                                <span id="nprice">{{x.price_asli}}</span> 
+                                تومان
+                            </div><!-- End .product-price -->
+                            {% endif %}
+                            <div class="product-content">
+                                <p>{{x.tozihat}}
+                                </p>
+                            </div><!-- End .product-content -->
+
+                            <div class="details-filter-row details-row-size">
+                                <label>رنگ : </label>
+                                <div class="product-nav product-nav-dots">                                    
+                                    <label class="container2">
+                                        <div class="checkmark rounded-style" style="border-radius: 15px; background: {{x.color_asli}}" onclick="ChangeColor('0',{{x.id}})"><input name="color" value='{{x.color_asli}}' type="radio" checked="checked" ></div>
+                                    </label>
+                                    {% for m in x.color_set.all %}
+                                    <label class="container2">
+                                        <div class="checkmark rounded-style"  style="border-radius: 15px; background: {{m.color}};" onclick="ChangeColor({{m.Ekhtelaf}},{{x.id}})"> <input name="color" value='{{m.color}}' type="radio"></div>
+                                    </label>
+                                    {% endfor %}
+                                </div><!-- End .product-nav -->
+                            </div><!-- End .details-filter-row -->
+
+                            <div class="details-filter-row details-row-size">
+                                <label for="size">سایز : </label>
+                                <div class="select-custom">
+                                    <select id='myoptions' name="size" id="size" class="form-control">
+                                        <option data-price='0' value="{{x.size_asli}}" checked>{{x.size_asli}}</option>
+                                        {% for m in x.size_set.all %}
+                                        <option data-price='{{m.Ekhtelaf}}' value="{{m.size}}">{{m.size}}</option>
+                                        {% endfor %}
+                                        {% comment %} test {% endcomment %}
+                                    </select>
+                                </div><!-- End .select-custom -->
+
+                                
+                            </div><!-- End .details-filter-row -->
+
+                            <div class="details-filter-row details-row-size">
+                                <label for="qty">تعداد : </label>
+                                <div class="product-details-quantity">
+                                    <input name='count' type="number" id="qty" class="form-control" value="1" min="1"
+                                        max="10" step="1" data-decimals="0" required>
+                                </div><!-- End .product-details-quantity -->
+                            </div><!-- End .details-filter-row -->
+
+                            <div class="product-details-action">
+                                <button type='submit' class="btn-product btn-cart"><span>افزودن به سبد خرید</span></button>
+
+                                <div class="details-action-wrapper">
+                                    <a href="#" class="btn-product btn-wishlist"
+                                        title="لیست علاقه مندی"><span>افزودن
+                                            به
+                                            علاقه مندی</span></a>
+                                    <a href="{% url 'product:compare_1' x.id %}" class="btn-product btn-compare" title="مقایسه"><span>افزودن به
+                                            لیست مقایسه</span></a>
+                                </div><!-- End .details-action-wrapper -->
+                            </div><!-- End .product-details-action -->
+
+                            <div class="product-details-footer">
+                                <div class="product-cat text-center">
+                                    <span>دسته بندی : </span>
+                                    <a href="#">{{x.category}}</a>،
+                                {% for m in x.tag.all %}
+                                <a>{{m.tag_name}}</a>،
+                                {% endfor %}
+                                </div><!-- End .product-cat -->
+
+                                <div class="social-icons social-icons-sm">
+                                    <span class="social-label">اشتراک گذاری : </span>
+                                    <a href="#" class="social-icon" title="فیسبوک" target="_blank"><i
+                                            class="icon-facebook-f"></i></a>
+                                    <a href="#" class="social-icon" title="توییتر" target="_blank"><i
+                                            class="icon-twitter"></i></a>
+                                    <a href="#" class="social-icon" title="اینستاگرام" target="_blank"><i
+                                            class="icon-instagram"></i></a>
+                                    <a href="#" class="social-icon" title="پینترست" target="_blank"><i
+                                            class="icon-pinterest"></i></a>
+                                </div>
+                            </div><!-- End .product-details-footer -->
+                        </form><!-- End .product-details -->
+                    </div><!-- End .col-md-6 -->
+                </div><!-- End .row -->
+            </div><!-- End .product-details-top -->
+
+            <div class="product-details-tab">
+                <ul class="nav nav-pills justify-content-center" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="product-desc-link" data-toggle="tab"
+                            href="#product-desc-tab" role="tab" aria-controls="product-desc-tab"
+                            aria-selected="true">توضیحات</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab"
+                            role="tab" aria-controls="product-info-tab" aria-selected="false">اطلاعات بیشتر</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="product-review-link" data-toggle="tab"
+                            href="#product-review-tab" role="tab" aria-controls="product-review-tab"
+                            aria-selected="false">نظرات ({{x.comment_set|show_count}})</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="product-desc-tab" role="tabpanel"
+                        aria-labelledby="product-desc-link">
+                        <div class="product-desc-content">
+                            {{x.info|safe}}
+                            
+                        </div><!-- End .product-desc-content -->
+                    </div><!-- .End .tab-pane -->
+                    <div class="tab-pane fade" id="product-info-tab" role="tabpanel"
+                        aria-labelledby="product-info-link">
+                        <div class="product-desc-content">
+                        {{x.more_info|safe}}
+                        </div><!-- End .product-desc-content -->
+                    </div><!-- .End .tab-pane -->
+                    <div class="tab-pane fade show active" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
+                        <div class="reviews">
+                            <h3>نظر ({{x.comment_set|show_count}})</h3>
+                            {% for comment in x.comment_set|filter_show %}
+                            {% if comment.parent == None %}                              
+                            <div class="review">
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <h4><a>{{comment.username}}</a></h4>
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val" style="width: 80%;"></div>
+                                                <!-- End .ratings-val -->
+                                            </div><!-- End .ratings -->
+                                        </div><!-- End .rating-container -->
+                                        <span class="review-date">{{comment.created}}</span>
+                                    </div><!-- End .col -->
+                                    <div class="col-12">
+                                        <h4>{{comment.title}}</h4>
+
+                                        <div class="review-content">
+                                            {{comment.body}}
+                                        </div>
+
+                                        <div class="review-action">
+                                            <a href="#"><i class="icon-thumbs-up"></i>مثبت ({{comment.like}})</a>
+                                            <a class="answer" data-comment_id="{{comment.id}}" data-comment_user="{{comment.username}}" href="#"><i class="icon-comments"></i>جواب</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                {% if comment.comment_set|filter_show %}
+                                    {% include "comment_loop.html" with x=comment %}
+                                {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                            <div class="review" id="comment_section">
+                                <div class="review-content">
+                                    <p id="reply_section"></p>
+                                    <form method="POST" action="{% url 'product:comment' %}"  class="col-lg-12">
+                                        {% csrf_token %}
+                                        <input type='hidden' name="product" value="{{x.id}}">
+                                        <input type="hidden" id="parent">
+                                        <label class="col-sm-1" for="username">نام مستعار</label>
+                                        <input class="col-sm-5" type="text" name="username">
+                                        <div class="col-sm-5"></div>
+                                        <label class="col-sm-1" for="title">موضوع</label>
+                                        <input class="col-sm-5" type="text" name="title">
+                                        <div class="col-sm-4"></div>
+                                        <label class="col-sm-1" for="body">متن</label>
+                                        <textarea class="col-sm-11" name="body" style="height:200px"></textarea>
+                                        <button type="submit">save</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="title text-center mb-4">محصولاتی که شاید بپسندید</h2>
+            {% comment %}<div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl"
+                data-owl-options='{
+                    "nav": false, 
+                    "dots": true,
+                    "margin": 20,
+                    "loop": false,
+                    "rtl": true, 
+                    "responsive": {
+                        "0": {
+                            "items":1
+                        },
+                        "480": {
+                            "items":2
+                        },
+                        "768": {
+                            "items":3
+                        },
+                        "992": {
+                            "items":4
+                        },
+                        "1200": {
+                            "items":4,
+                            "nav": true,
+                            "dots": false
+                        }
+                    }
+                }'>
+                <div class="product product-7 text-center">
+                    <figure class="product-media">
+                        <span class="product-label label-new">جدید</span>
+                        <a href="product.html">
+                            <img src="assets/images/products/product-4.jpg" alt="تصویر محصول"
+                                class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>افزودن به
+                                    لیست علاقه مندی</span></a>
+                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                title="مشاهده سریع"><span>مشاهده سریع</span></a>
+                            <a href="#" class="btn-product-icon btn-compare" title="مقایسه"><span>لیست
+                                    مقایسه</span></a>
+                        </div><!-- End .product-action-vertical -->
+
+                        <div class="product-action">
+                            <a href="#" class="btn-product btn-cart"><span>افزودن به سبد خرید</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat text-center">
+                            <a href="#">زنانه</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title text-center"><a href="product.html">دامن چرم قهوه ای</a></h3>
+                        <!-- End .product-title -->
+                        <div class="product-price">
+                            60,000 تومان
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <span class="ratings-text">( 2 دیدگاه )</span>
+                        </div><!-- End .rating-container -->
+
+                        <div class="product-nav product-nav-thumbs">
+                            <a href="#" class="active">
+                                <img src="{% static 'assets/images/products/product-4-thumb.jpg' %}" alt="product desc">
+                            </a>
+                            <a href="#">
+                                <img src="{% static 'assets/images/products/product-4-2-thumb.jpg' %}" alt="product desc">
+                            </a>
+
+                            <a href="#">
+                                <img src="{% static 'assets/images/products/product-4-3-thumb.jpg' %}" alt="product desc">
+                            </a>
+                        </div><!-- End .product-nav -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+
+                <div class="product product-7 text-center">
+                    <figure class="product-media">
+                        <span class="product-label label-out">ناموجود</span>
+                        <a href="product.html">
+                            <img src="assets/images/products/product-6.jpg" alt="تصویر محصول"
+                                class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>افزودن به
+                                    لیست علاقه مندی</span></a>
+                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                title="مشاهده سریع"><span>مشاهده سریع</span></a>
+                            <a href="#" class="btn-product-icon btn-compare" title="مقایسه"><span>لیست
+                                    مقایسه</span></a>
+                        </div><!-- End .product-action-vertical -->
+
+                        <div class="product-action">
+                            <a href="#" class="btn-product btn-cart"><span>افزودن به سبد خرید</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat text-center">
+                            <a href="#">ژاکت</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title text-center"><a href="product.html">بلوز شلوار خاکی</a></h3>
+                        <!-- End .product-title -->
+                        <div class="product-price">
+                            <span class="out-price">120,000 تومان</span>
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <span class="ratings-text">( 6 دیدگاه )</span>
+                        </div><!-- End .rating-container -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+
+                <div class="product product-7 text-center">
+                    <figure class="product-media">
+                        <span class="product-label label-top">برتر</span>
+                        <a href="product.html">
+                            <img src="assets/images/products/product-11.jpg" alt="تصویر محصول"
+                                class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>افزودن به
+                                    لیست علاقه مندی</span></a>
+                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                title="مشاهده سریع"><span>مشاهده سریع</span></a>
+                            <a href="#" class="btn-product-icon btn-compare" title="مقایسه"><span>لیست
+                                    مقایسه</span></a>
+                        </div><!-- End .product-action-vertical -->
+
+                        <div class="product-action">
+                            <a href="#" class="btn-product btn-cart"><span>افزودن به سبد خرید</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat text-center">
+                            <a href="#">کفش</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title text-center"><a href="product.html">کش زنانه قهوه ای پاشنه
+                                دار</a>
+                        </h3><!-- End .product-title -->
+                        <div class="product-price">
+                            110,000 تومان
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <span class="ratings-text">( 1 دیدگاه )</span>
+                        </div><!-- End .rating-container -->
+
+                        <div class="product-nav product-nav-thumbs">
+                            <a href="#" class="active">
+                                <img src="assets/images/products/product-11-thumb.jpg" alt="product desc">
+                            </a>
+                            <a href="#">
+                                <img src="assets/images/products/product-11-2-thumb.jpg" alt="product desc">
+                            </a>
+
+                            <a href="#">
+                                <img src="assets/images/products/product-11-3-thumb.jpg" alt="product desc">
+                            </a>
+                        </div><!-- End .product-nav -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+
+                <div class="product product-7 text-center">
+                    <figure class="product-media">
+                        <a href="product.html">
+                            <img src="assets/images/products/product-10.jpg" alt="تصویر محصول"
+                                class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>افزودن به
+                                    لیست علاقه مندی</span></a>
+                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                title="مشاهده سریع"><span>مشاهده سریع</span></a>
+                            <a href="#" class="btn-product-icon btn-compare" title="مقایسه"><span>لیست
+                                    مقایسه</span></a>
+                        </div><!-- End .product-action-vertical -->
+
+                        <div class="product-action">
+                            <a href="#" class="btn-product btn-cart"><span>افزودن به سبد خرید</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat text-center">
+                            <a href="#">لباس زنانه</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title text-center"><a href="product.html">لباس زنانه دکمه دار رنگ
+                                زرد</a></h3>
+                        <!-- End .product-title -->
+                        <div class="product-price">
+                            56,000 تومان
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: 0%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <span class="ratings-text">( 0 دیدگاه )</span>
+                        </div><!-- End .rating-container -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+
+                <div class="product product-7 text-center">
+                    <figure class="product-media">
+                        <a href="product.html">
+                            <img src="{% static 'assets/images/products/product-7.jpg' %}" alt="تصویر محصول"
+                                class="product-image">
+                        </a>
+
+                        <div class="product-action-vertical">
+                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>افزودن به
+                                    لیست علاقه مندی</span></a>
+                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                title="مشاهده سریع"><span>مشاهده سریع</span></a>
+                            <a href="#" class="btn-product-icon btn-compare" title="مقایسه"><span>لیست
+                                    مقایسه</span></a>
+                        </div><!-- End .product-action-vertical -->
+
+                        <div class="product-action">
+                            <a href="#" class="btn-product btn-cart"><span>افزودن به سبد خرید</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat text-center">
+                            <a href="#">لی</a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title text-center"><a href="product.html">لباس آبی زنانه</a>
+                        </h3><!-- End .product-title -->
+                        <div class="product-price">
+                            76,000 تومان
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <span class="ratings-text">( 2 دیدگاه )</span>
+                        </div><!-- End .rating-container -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+            </div> {% endcomment %}
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $('#myoptions').change(function() {
+        let val = $("#myoptions option:selected").data('price');
+        ChangeSize(val,'0');
+    });
+
+    $(".answer").click(function(e){
+        e.preventDefault()
+        comment_id = $(this).data('comment_id')
+        comment_user = $(this).data('comment_user')
+        $("#parent").val(comment_id).attr('name', 'parent')
+        $("#reply_section").html(`در حال پاسخ به ${comment_user} <a href=# onclick=delete_Reply(event) >&times;</a>`)
+        $("#comment_section")[0].scrollIntoView({'behavior':'smooth','block':'center'});
+    })
+
+});
+function delete_Reply(event){
+    event.preventDefault()
+    $("#parent").val("").attr('name', '')
+    $("#reply_section").html("")
+}
+    
+var size_temp = 0
+var color_temp = 0
+function ChangeColor(color_price,id_product) {
+    color_temp = color_price
+    $("#nprice").html({{x.main_discount_cal}} + parseInt(color_temp) + parseInt(size_temp))
+}
+function ChangeSize(size_price,id_product) {
+    size_temp = size_price
+    $("#nprice").html({{x.main_discount_cal}} + parseInt(color_temp) + parseInt(size_temp))
+}
+</script>
+{% endblock body %}

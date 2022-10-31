@@ -1,0 +1,177 @@
+function cccCreateCSSSelector (selector, styleRules) {
+	var style = document.createElement('style');
+    style.type = 'text/css';
+    document.getElementsByTagName('head')[0].appendChild(style);
+    if(!(style.sheet||{}).insertRule){
+        (style.styleSheet || style.sheet).addRule(selector, styleRules);
+    }else{
+        style.sheet.insertRule(selector+"{"+styleRules+"}",0);
+    }
+}
+
+var cccCurrentTheme = {
+	General: {
+		background: '#FFF',
+		borderWidth: '6px',
+		borderColor: '#ffcd04',
+		borderRadius: '0 0 0 0',
+		textColor: '#000'
+	},
+	Rows: {
+		borderColor: 'rgba(93,93,93,0.4)',
+		textColor: '#555',
+		upColor: '#0fc73e',
+		downColor: '#cf596f'
+	},	
+	Conversion: {
+		background: 'transparent',
+		lineHeight: '20px',
+		color: '#000',
+	}
+};
+
+if (typeof cccTheme !== 'undefined') {
+	for (var key in cccCurrentTheme) {
+		var group = cccCurrentTheme[key];
+		for (var prop in group) {
+			if (!group.hasOwnProperty(prop)) {
+				continue;
+			}
+			if (cccTheme.hasOwnProperty(key) && cccTheme[key].hasOwnProperty(prop)) {
+					cccCurrentTheme[key][prop] = cccTheme[key][prop];
+			}
+		}
+	}
+}
+
+if (typeof cccThemeHistoWeek !== 'undefined') {
+	for (var key in cccCurrentTheme) {
+		var group = cccCurrentTheme[key];
+		for (var prop in group) {
+			if (!group.hasOwnProperty(prop)) {
+				continue;
+			}
+			if (cccThemeHistoWeek.hasOwnProperty(key) && cccThemeHistoWeek[key].hasOwnProperty(prop)) {
+					cccCurrentTheme[key][prop] = cccThemeHistoWeek[key][prop];
+			}
+		}
+	}
+}
+
+var embedable = document.createElement("div");
+var embedablePriceInfo = document.createElement("div");
+
+embedable.className = "ccc-widget ccc-histo-week";
+
+embedablePriceInfo.style.background		= cccCurrentTheme.General.background;
+embedablePriceInfo.style.border			= cccCurrentTheme.General.borderWidth + ' solid ' + cccCurrentTheme.General.borderColor;	
+embedablePriceInfo.style.borderRadius 	= cccCurrentTheme.General.borderRadius;
+embedablePriceInfo.style.color 			= cccCurrentTheme.General.textColor;
+
+cccCreateCSSSelector('div.histoTitle', 'text-align: center; font-size: 18px; font-weight: 600; margin-top: 18px; margin-bottom: 12px;');
+cccCreateCSSSelector('div.histoRow', 'color: ' + cccCurrentTheme.Rows.textColor + '; overflow: auto; font-size: 16px; padding: 15px 30px; border-bottom: 1px solid ' + cccCurrentTheme.Rows.borderColor);
+cccCreateCSSSelector('div.histoRow div', 'text-align: center; float: left; width: 25%;');
+cccCreateCSSSelector('div.histoRow div:first-child', 'text-align: left;');
+cccCreateCSSSelector('div.histoRow div:last-child', 'font-weight: 600;');
+cccCreateCSSSelector('div.histoRow:last-child', 'border-bottom: none');
+
+cccCreateCSSSelector('.positive', 'color: ' + cccCurrentTheme.Rows.upColor);
+cccCreateCSSSelector('.positive:before', 'content: \'+\'');
+cccCreateCSSSelector('.negative', 'color: ' + cccCurrentTheme.Rows.downColor);
+cccCreateCSSSelector('.negative:before', 'content: \'-\'');
+
+embedablePriceInfo.innerHTML = `<div class="histoTitle">Historical BTC Price and Volume</div>
+<div class="histoRow" style="font-weight: 600;">
+	<div class="histoTime">تاریخ</div>
+	<div class="histoPrice">قیمت</div>
+	<div class="histoVolume">پرش</div>
+	<div class="histoChange">تغییر</div>
+</div>`;
+
+Date.prototype.dayMonthYear = function() {
+	var month = (this.getMonth() + 1).toString();
+	var dd = this.getDate().toString();
+	var yyyy = this.getFullYear().toString();
+	
+	return (dd[1] ? dd : "0" + dd[0]) + "-" + (month[1] ? month : "0" + month[0]) + "-" + yyyy;
+};
+
+
+var histoRow1 = document.createElement("div");
+histoRow1.className = 'histoRow';
+histoRow1.innerHTML = `
+	<div class="histoTime">` + new Date(1643155200 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 38,238.1</div>
+	<div class="histoVolume">$ 1.49 B</div>
+	<div class="histoChange positive"><span>3.41%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow1);
+
+var histoRow2 = document.createElement("div");
+histoRow2.className = 'histoRow';
+histoRow2.innerHTML = `
+	<div class="histoTime">` + new Date(1643068800 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 36,976.0</div>
+	<div class="histoVolume">$ 1.63 B</div>
+	<div class="histoChange positive"><span>0.74%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow2);
+
+var histoRow3 = document.createElement("div");
+histoRow3.className = 'histoRow';
+histoRow3.innerHTML = `
+	<div class="histoTime">` + new Date(1642982400 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 36,702.8</div>
+	<div class="histoVolume">$ 3.29 B</div>
+	<div class="histoChange positive"><span>1.14%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow3);
+
+var histoRow4 = document.createElement("div");
+histoRow4.className = 'histoRow';
+histoRow4.innerHTML = `
+	<div class="histoTime">` + new Date(1642896000 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 36,288.2</div>
+	<div class="histoVolume">$ 1.41 B</div>
+	<div class="histoChange positive"><span>3.46%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow4);
+
+var histoRow5 = document.createElement("div");
+histoRow5.className = 'histoRow';
+histoRow5.innerHTML = `
+	<div class="histoTime">` + new Date(1642809600 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 35,075.9</div>
+	<div class="histoVolume">$ 2.42 B</div>
+	<div class="histoChange negative"><span>3.82%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow5);
+
+var histoRow6 = document.createElement("div");
+histoRow6.className = 'histoRow';
+histoRow6.innerHTML = `
+	<div class="histoTime">` + new Date(1642723200 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 36,469.3</div>
+	<div class="histoVolume">$ 3.61 B</div>
+	<div class="histoChange negative"><span>10.39%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow6);
+
+var histoRow7 = document.createElement("div");
+histoRow7.className = 'histoRow';
+histoRow7.innerHTML = `
+	<div class="histoTime">` + new Date(1642636800 * 1000).dayMonthYear() + `</div>
+	<div class="histoPrice">$ 40,697.0</div>
+	<div class="histoVolume">$ 1.48 B</div>
+	<div class="histoChange negative"><span>2.35%</span></div>`;
+
+embedablePriceInfo.appendChild(histoRow7);
+
+
+embedable.appendChild(embedablePriceInfo);
+
+
+
+
+
+document.currentScript.parentNode.appendChild(embedable);
